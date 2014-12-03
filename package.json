@@ -19,14 +19,14 @@
   },
   "main": "okcoin.js",
   "author": "Etienne TATUR (https://github.com/etiennetatur)",
-  "contributors": [
-  ],
+  "contributors": [],
   "license": "MIT",
   "dependencies": {
     "MD5": "^1.2.1",
-    "request": "^2.27.0"
+    "request": "^2.27.0",
+    "lodash": "^2.4.1"
   },
-   "devDependencies": {
+  "devDependencies": {
     "mocha": "*",
     "sinon": "*",
     "should": "*"

@@ -2,21 +2,22 @@
 
 var request  = require('request');
 var md5 = require('MD5');
+var _ = require('lodash');
 
 /**
  * OKCoin connects to the OKCoin.cn API
- * @param {String} partner    
+ * @param {String} api_key    
  * @param {String} secret API Secret
  */
-function OKCoin(partner, secret) {
+function OKCoin(api_key, secret, settings) {
   var self = this;
 
-  var config = {
+  var config = _.defaults(settings||{},{
     url: 'https://www.okcoin.cn/api',
     version: 'v1',
-    partner: partner,
+    api_key: api_key,
     secret: secret
-  };
+  });
 
   /**
   * Public methods supported
@@ -56,6 +57,18 @@ function OKCoin(partner, secret) {
     return privateMethod(path, params, callback);
   }
 
+  this.cancel_order = function(order_id, symbol, callback) {
+    var path  = '/' + config.version + '/cancel_order.do';
+    var params = {order_id:order_id,symbol:symbol};
+    return privateMethod(path, params, callback);
+  };
+
+  this.order_info = function(order_id, symbol, callback) {
+    var path  = '/' + config.version + '/order_info.do';
+    var params = {order_id:order_id,symbol:symbol};
+    return privateMethod(path, params, callback);
+  };
+
   /**
    * This method makes a public API request.
    * @param  {String}   path   The path to the API method 
@@ -77,7 +90,7 @@ function OKCoin(partner, secret) {
    */
   function privateMethod(path, params, callback) {
     var url    = config.url + path;
-    params.partner = config.partner;
+    params.api_key = config.api_key;
     params.sign  = getMessageSignature(params);
     return okcoinRequest(url, 'POST', params, callback);
   }
@@ -109,7 +122,7 @@ function OKCoin(partner, secret) {
     }
     arr.sort();
     for (i = 0; i < arr.length; i++) {
-        if (i != 0) {
+        if (i !== 0) {
         formattedObject += '&';
         }
         formattedObject += arr[i] + '=' + obj[arr[i]];
@@ -160,30 +173,31 @@ function OKCoin(partner, secret) {
     return req;
   }
   
+  var error_codes = {
+    10000 : 'Required parameter can not be null',
+    10001 : 'Requests are too frequent',
+    10002 : 'System Error',
+    10003 : 'Restricted list request, please try again later',
+    10004 : 'IP restriction',
+    10005 : 'Key does not exist',
+    10006 : 'User does not exist',
+    10007 : 'Signatures do not match',
+    10008 : 'Illegal parameter',
+    10009 : 'Order does not exist',
+    10010 : 'Insufficient balance',
+    10011 : 'Order is less than minimum trade amount',
+    10012 : 'Unsupported symbol (not btc_cny or ltc_cny)',
+    10013 : 'This interface only accepts https requests'
+  };
   /**
    * This method return the OKCoin error information
    * @param  {Integer}  error_code   OKCoin error code
    * @return {String}                Error
    */
   function error_code_meaning(error_code) {
-        var codes = { 10000 : 'Required parameter can not be null',
-                  10001 : 'Requests are too frequent',
-                  10002 : 'System Error',
-                  10003 : 'Restricted list request, please try again later',
-                  10004 : 'IP restriction',
-                  10005 : 'Key does not exist',
-                  10006 : 'User does not exist',
-                  10007 : 'Signatures do not match',
-                  10008 : 'Illegal parameter',
-                  10009 : 'Order does not exist',
-                  10010 : 'Insufficient balance',
-                  10011 : 'Order is less than minimum trade amount',
-                  10012 : 'Unsupported symbol (not btc_cny or ltc_cny)',
-                  10013 : 'This interface only accepts https requests' };
-        if (!codes[error_code]) {
-            return 'OKCoin error code :' + error_code +' is not yet supported by the API';
-            }
-        return( codes[error_code] );
+    var msg = error_codes[error_code] ||
+      'OKCoin error code :' + error_code +' is not yet supported by the API';
+    return { code: error_code, error: error_codes[error_code] };
   }
   
   

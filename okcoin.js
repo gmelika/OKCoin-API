@@ -69,6 +69,12 @@ function OKCoin(api_key, secret, settings) {
     return privateMethod(path, params, callback);
   };
 
+  this.order_history = function(symbol, status, page, pagesize, callback) {
+    var path  = '/' + config.version + '/order_history.do';
+    var params = {current_page:page,symbol:symbol,status:status,page_length:pagesize};
+    return privateMethod(path, params, callback);
+  };
+
   /**
    * This method makes a public API request.
    * @param  {String}   path   The path to the API method 
@@ -187,7 +193,28 @@ function OKCoin(api_key, secret, settings) {
     10010 : 'Insufficient balance',
     10011 : 'Order is less than minimum trade amount',
     10012 : 'Unsupported symbol (not btc_cny or ltc_cny)',
-    10013 : 'This interface only accepts https requests'
+    10013 : 'This interface only accepts https requests',
+    10014 : 'Order price must be between 0 and 1,000,000',
+    10015 : 'Order price differs from current market price too much',
+    10016 : 'Insufficient coins balance',
+    10017 : 'API authorization error',
+    10026 : 'Loan (including reserved loan) and margin cannot be withdrawn',
+    10027 : 'Cannot withdraw within 24 hrs of authentication information modification',
+    10028 : 'Withdrawal amount exceeds daily limit',
+    10029 : 'Account has unpaid loan, please cancel/pay off the loan before withdraw',
+    10031 : 'Deposits can only be withdrawn after 6 confirmations',
+    10032 : 'Please enabled phone/google authenticator',
+    10033 : 'Fee higher than maximum network transaction fee',
+    10034 : 'Fee lower than minimum network transaction fee',
+    10035 : 'Insufficient BTC/LTC',
+    10036 : 'Withdrawal amount too low',
+    10037 : 'Trade password not set',
+    10040 : 'Withdrawal cancellation fails',
+    10041 : 'Withdrawal address not approved',
+    10042 : 'Admin password error',
+    10100 : 'User account frozen',
+    10216 : 'Non-available API',
+      503 : 'Too many requests (Http)',
   };
   /**
    * This method return the OKCoin error information

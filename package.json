@@ -22,7 +22,7 @@
   "contributors": [],
   "license": "MIT",
   "dependencies": {
-    "MD5": "^1.2.1",
+    "md5": "^2.2.1",
     "request": "^2.27.0",
     "lodash": "^2.4.1"
   },

@@ -69,12 +69,12 @@ function OKCoin(api_key, secret, settings) {
         return privateMethod(path, params, callback);
     };
 
-    this.orders_info = function(orders_id, symbol, callback) {
+    this.orders_info = function(orders_id, symbol, type, callback) {
         if (Array.isArray(orders_id)) {
             orders_id = orders_id.join(",")
         }
         var path = '/' + config.version + '/orders_info.do';
-        var params = { order_id: orders_id, symbol: symbol };
+        var params = { order_id: orders_id, symbol: symbol, type: type };
         return privateMethod(path, params, callback);
     };
 
